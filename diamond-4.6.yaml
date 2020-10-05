@@ -20,10 +20,10 @@ dsl_definitions:
 inputs:
 
   image_id:
-    default: d732f334-28d8-4351-b64f-96375314c4be
+    default: 70de1e0f-2951-4eae-9a8f-05afd97cd036
 
   flavor_name:
-    default: m1.small
+    default: m1.medium
 
   keypair_name:
     default: postkeypair
@@ -60,8 +60,8 @@ node_templates:
     relationships:
       - target: public_subnet_nic
         type: cloudify.relationships.openstack.server_connected_to_port
-      - target: private_subnet_nic
-        type: cloudify.relationships.openstack.server_connected_to_port
+      # - target: private_subnet_nic
+      #   type: cloudify.relationships.openstack.server_connected_to_port
       - type: cloudify.relationships.depends_on
         target: cloudify_host_cloud_config
     interfaces:
@@ -132,17 +132,17 @@ node_templates:
       - type: cloudify.relationships.openstack.port_connected_to_floating_ip
         target: public_ip
 
-  private_subnet_nic:
-    type: cloudify.nodes.openstack.Port
-    properties:
-      client_config: *client_config
-    relationships:
-      - type: cloudify.relationships.contained_in
-        target: private_network
-      - type: cloudify.relationships.depends_on
-        target: private_subnet
-      - type: cloudify.relationships.openstack.port_connected_to_security_group
-        target: security_group
+  # private_subnet_nic:
+  #   type: cloudify.nodes.openstack.Port
+  #   properties:
+  #     client_config: *client_config
+  #   relationships:
+  #     - type: cloudify.relationships.contained_in
+  #       target: private_network
+  #     - type: cloudify.relationships.depends_on
+  #       target: private_subnet
+  #     - type: cloudify.relationships.openstack.port_connected_to_security_group
+  #       target: security_group
 
   security_group:
     type: cloudify.nodes.openstack.SecurityGroup
@@ -159,24 +159,24 @@ node_templates:
       resource_config:
         floating_network_name: { get_property: [ external_network, resource_config, name ] }
 
-  private_subnet:
-    type: cloudify.nodes.openstack.Subnet
-    properties:
-      client_config: *client_config
-      use_external_resource: true
-      resource_config:
-        name: cfy-subnet-priv
-    relationships:
-      - target: private_network
-        type: cloudify.relationships.contained_in
+  # private_subnet:
+  #   type: cloudify.nodes.openstack.Subnet
+  #   properties:
+  #     client_config: *client_config
+  #     use_external_resource: true
+  #     resource_config:
+  #       name: cfy-subnet-priv
+  #   relationships:
+  #     - target: private_network
+  #       type: cloudify.relationships.contained_in
 
-  private_network:
-    type: cloudify.nodes.openstack.Network
-    properties:
-      client_config: *client_config
-      use_external_resource: true
-      resource_config:
-        name: cfy-network-priv
+  # private_network:
+  #   type: cloudify.nodes.openstack.Network
+  #   properties:
+  #     client_config: *client_config
+  #     use_external_resource: true
+  #     resource_config:
+  #       name: cfy-network-priv
 
   public_subnet:
     type: cloudify.nodes.openstack.Subnet
